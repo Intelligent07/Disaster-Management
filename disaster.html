@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recent Disasters in India</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background-color: #f4f4f4;
+      }
+      .container {
+        max-width: 1200px;
+        margin: auto;
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
+      .card {
+        background: white;
+        padding: 20px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+      }
+      .card h2 {
+        margin: 0;
+        color: #d9534f;
+      }
+      .location {
+        color: #555;
+        margin: 10px 0;
+      }
+      .details {
+        color: #666;
+      }
+      .alert-button {
+        background: #d9534f;
+        color: white;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 10px;
+        border-radius: 5px;
+      }
+      .alert-button:hover {
+        background: #c9302c;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Recent Disasters in India</h1>
+      <div class="grid" id="disaster-list">
+        <!-- Disaster alerts will be populated here -->
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        fetch("/api/disasters")
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            const container = document.getElementById("disaster-list");
+            container.innerHTML = ""; // Clear previous content
+            data.forEach((disaster) => {
+              const card = document.createElement("div");
+              card.className = "card";
+              card.innerHTML = `
+                            <h2>${disaster.type}</h2>
+                            <p class="location">📍 ${disaster.location}</p>
+                            <p class="details">${disaster.details}</p>
+                            <button class="alert-button">Generate Alert</button>
+                        `;
+              container.appendChild(card);
+            });
+          })
+          .catch((error) => {
+            console.error("Error fetching data:", error);
+            document.getElementById("disaster-list").innerHTML =
+              "<p style='color: red; text-align: center;'>Failed to load disaster data.</p>";
+          });
+      });
+    </script>
+  </body>
+</html>
